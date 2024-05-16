@@ -1,3 +1,6 @@
+import React from "react";
+import "tailwindcss/tailwind.css";
+
 const FileTreeNode = ({ fileName, nodes, onSelect, path }) => {
   const isDir = !!nodes;
   return (
@@ -7,16 +10,24 @@ const FileTreeNode = ({ fileName, nodes, onSelect, path }) => {
         if (isDir) return;
         onSelect(path);
       }}
-      style={{ marginLeft: "10px" }}
-    >
-      <p className={isDir ? "" : "file-node"}>{fileName}</p>
+      className={`ml-4 cursor-pointer ${
+        isDir ? "text-blue-500" : "text-gray-700"
+      }`}>
+      <div className={`flex items-center ${isDir ? "font-bold" : ""}`}>
+        {isDir ? (
+          <span className="mr-2">📁</span>
+        ) : (
+          <span className="mr-2">📄</span>
+        )}
+        <p className={isDir ? "" : "file-node"}>{fileName}</p>
+      </div>
       {nodes && fileName !== "node_modules" && (
-        <ul>
+        <ul className="ml-4">
           {Object.keys(nodes).map((child) => (
-            <li key={child}>
+            <li key={child} className="mt-1">
               <FileTreeNode
                 onSelect={onSelect}
-                path={path + "/" + child}
+                path={`${path}/${child}`}
                 fileName={child}
                 nodes={nodes[child]}
               />
@@ -29,6 +40,11 @@ const FileTreeNode = ({ fileName, nodes, onSelect, path }) => {
 };
 
 const FileTree = ({ tree, onSelect }) => {
-  return <FileTreeNode onSelect={onSelect} fileName="/" path="" nodes={tree} />;
+  return (
+    <div className="p-4 border border-gray-200 rounded shadow-sm bg-white w-[400px]">
+      <FileTreeNode onSelect={onSelect} fileName="/" path="" nodes={tree} />
+    </div>
+  );
 };
+
 export default FileTree;

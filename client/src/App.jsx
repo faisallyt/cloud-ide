@@ -42,7 +42,7 @@ function App() {
   }, [selectedFileContent]);
 
   const getFileTree = async () => {
-    const response = await fetch("http://localhost:9000/files");
+    const response = await fetch("http://localhost:4000/files");
     const result = await response.json();
     setFileTree(result.tree);
   };
@@ -50,7 +50,7 @@ function App() {
   const getFileContents = useCallback(async () => {
     if (!selectedFile) return;
     const response = await fetch(
-      `http://localhost:9000/files/content?path=${selectedFile}`
+      `http://localhost:4000/files/content?path=${selectedFile}`
     );
     const result = await response.json();
     setSelectedFileContent(result.content);
@@ -68,9 +68,9 @@ function App() {
   }, []);
 
   return (
-    <div className="playground-container">
-      <div className="editor-container">
-        <div className="files">
+    <div className="playground-container flex flex-col h-screen">
+      <div className="editor-container flex flex-1">
+        <div className="files w-1/4 border-r border-gray-200">
           <FileTree
             onSelect={(path) => {
               setSelectedFileContent("");
@@ -79,22 +79,23 @@ function App() {
             tree={fileTree}
           />
         </div>
-        <div className="editor">
+        <div className="editor flex-1 p-4">
           {selectedFile && (
-            <p>
+            <p className="mb-2">
               {selectedFile.replaceAll("/", " > ")}{" "}
               {isSaved ? "Saved" : "Unsaved"}
             </p>
           )}
           <AceEditor
             width="100%"
+            height="calc(100% - 24px)" // Subtract the height of the file path text
             mode={getFileMode({ selectedFile })}
             value={code}
             onChange={(e) => setCode(e)}
           />
         </div>
       </div>
-      <div className="terminal-container">
+      <div className="terminal-container h-1/3 border-t border-gray-200">
         <Terminal />
       </div>
     </div>
